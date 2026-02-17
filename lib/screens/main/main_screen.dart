@@ -7,7 +7,7 @@ class MainScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA), // 살짝 밝은 그레이로 배경색 변경 (카드 부각)
+      backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -40,7 +40,7 @@ class MainScreen extends StatelessWidget {
                 backgroundColor: Color.fromARGB(255, 255, 255, 255),
                 child: Icon(
                   Icons.settings_rounded,
-                  color: Color.fromARGB(255, 243, 115, 33),
+                  color: AppColors.hanwhaOrange,
                   size: 20,
                 ),
               ),
@@ -167,7 +167,7 @@ class MainScreen extends StatelessWidget {
             _buildMenuButton(
               '실시간 송금하기',
               Icons.send_rounded,
-              const Color.fromARGB(255, 248, 155, 108),
+              AppColors.orangeLight,
             ),
 
             const SizedBox(height: 30),
@@ -180,28 +180,28 @@ class MainScreen extends StatelessWidget {
                   '주변 병원',
                   Icons.local_hospital_rounded,
                   const Color.fromARGB(255, 255, 255, 255),
-                  Color.fromARGB(255, 248, 155, 108),
+                  AppColors.orangeLight,
                 ),
                 const SizedBox(width: 12),
                 _buildGridItem(
                   '병원 통역',
                   Icons.translate_rounded,
                   const Color.fromARGB(255, 255, 255, 255),
-                  Color.fromARGB(255, 248, 155, 108),
+                  AppColors.orangeLight,
                 ),
                 const SizedBox(width: 12),
                 _buildGridItem(
                   '가족 관리',
                   Icons.family_restroom_rounded,
                   const Color.fromARGB(255, 255, 255, 255),
-                  Color.fromARGB(255, 248, 155, 108),
+                  AppColors.orangeLight,
                 ),
                 const SizedBox(width: 12),
                 _buildGridItem(
                   '귀국 신청',
                   Icons.airplane_ticket_rounded,
                   const Color.fromARGB(255, 255, 255, 255),
-                  Color.fromARGB(255, 248, 155, 108),
+                  AppColors.orangeLight,
                 ),
               ],
             ),
@@ -217,7 +217,7 @@ class MainScreen extends StatelessWidget {
                 width: double.infinity,
                 height: 70,
                 decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 243, 115, 33),
+                  color: AppColors.hanwhaOrange,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: const Row(
