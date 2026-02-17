@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hanwha/constants/theme.dart';
 
 class MainScreen extends StatelessWidget {
   const MainScreen({super.key});
@@ -73,9 +74,9 @@ class MainScreen extends StatelessWidget {
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
                   colors: [
-                    Color.fromARGB(255, 243, 115, 33),
-                    Color.fromARGB(255, 248, 155, 108),
-                    Color.fromARGB(255, 251, 181, 132),
+                    AppColors.hanwhaOrange,
+                    AppColors.orangeLight,
+                    AppColors.orangeLighter,
                     Color(0xFFFCD2B2),
                   ],
                   begin: Alignment.topLeft,
