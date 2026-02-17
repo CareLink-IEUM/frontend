@@ -1,7 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:hanwha/config/api_config.dart';
 import 'package:hanwha/constants/theme.dart';
 import 'package:hanwha/widgets/insurance/insurance_check_card.dart';
 import 'package:hanwha/widgets/insurance/insurance_category_select.dart';
+import 'package:hanwha/screens/insurance/info/insurance_modal.dart';
+import 'package:http/http.dart' as http;
 
 class InsuranceCustomScreen extends StatefulWidget {
   const InsuranceCustomScreen({super.key});
@@ -12,38 +17,166 @@ class InsuranceCustomScreen extends StatefulWidget {
 
 class _InsuranceCustomScreenState extends State<InsuranceCustomScreen> {
   int _selectedCategoryIndex = 0;
-  final List<String> _categories = ['암', '건강', '사망', '저축·연금', '유병자'];
 
-  // 1. final을 제거하여 데이터 수정이 가능하게 변경합니다.
-  List<Map<String, dynamic>> _coreItems = [
-    {
-      'title': '암 진단비',
-      'subTitle': '유사암 제외 최초 1회 지급',
-      'amount': '2,000만원',
-      'isChecked': true,
-    },
-    {
-      'title': '뇌혈관질환 진단비',
-      'subTitle': '최초 1회 지급',
-      'amount': '1,000만원',
-      'isChecked': true,
-    },
+  // 백엔드 enum 기반 카테고리 코드 (MINI 제외)
+  final List<String> _categoryCodes = [
+    'DISEASE',
+    'INJURY',
+    'DENTAL',
+    'DRIVER',
+    'LIVING',
   ];
 
-  List<Map<String, dynamic>> _riderItems = [
-    {
-      'title': '허혈성심장질환 진단비',
-      'subTitle': '최초 1회 지급',
-      'amount': '1,000만원',
-      'isChecked': true,
-    },
-    {
-      'title': '상해수술비',
-      'subTitle': '수술 1회당 지급',
-      'amount': '100만원',
-      'isChecked': true,
-    },
-  ];
+  // 화면에 보여줄 한글 라벨 매핑
+  final Map<String, String> _categoryLabels = const {
+    'DISEASE': '질병',
+    'INJURY': '상해',
+    'DENTAL': '치과',
+    'DRIVER': '운전자',
+    'LIVING': '생활',
+  };
+
+  // 실제 카드에 쓸 데이터 (서버 응답 기반)
+  List<CoverageItem> _coreItems = [];
+  List<CoverageItem> _riderItems = [];
+
+  List<String> get _categories =>
+      _categoryCodes.map((code) => _categoryLabels[code] ?? code).toList();
+
+  List<CoverageItem> get _filteredRiderItems {
+    if (_riderItems.isEmpty) return [];
+    final currentCode = _categoryCodes[_selectedCategoryIndex];
+    return _riderItems
+        .where((item) => item.category == currentCode)
+        .toList();
+  }
+
+  int get _totalSelectedPrice {
+    final all = <CoverageItem>[
+      ..._coreItems,
+      ..._riderItems,
+    ];
+    return all
+        .where((item) => item.isChecked)
+        .fold(0, (sum, item) => sum + item.price);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchInsuranceCoverages();
+  }
+
+  Future<void> _fetchInsuranceCoverages() async {
+    try {
+      final uri = Uri.parse('${ApiConfig.baseUrl}/api/insurance/2');
+      final response = await http.get(uri);
+
+      if (response.statusCode != 200) {
+        return;
+      }
+
+      final decoded = json.decode(response.body) as Map<String, dynamic>;
+      final data = decoded['data'] as Map<String, dynamic>;
+      final coverages = (data['coverages'] as List<dynamic>? ?? []);
+
+      final List<CoverageItem> core = [];
+      final List<CoverageItem> rider = [];
+
+      for (final item in coverages) {
+        final map = item as Map<String, dynamic>;
+
+        final coverage = CoverageItem(
+          coverageId: (map['coverageId'] as num).toInt(),
+          linkId: (map['linkId'] as num).toInt(),
+          name: map['name'] as String,
+          category: map['category'] as String,
+          description: map['description'] as String? ?? '',
+          amount: (map['amount'] as num).toInt(),
+          price: (map['price'] as num).toInt(),
+          mandatory: map['mandatory'] as bool,
+        );
+
+        if (coverage.mandatory) {
+          core.add(coverage);
+        } else {
+          rider.add(coverage);
+        }
+      }
+
+      setState(() {
+        _coreItems = core;
+        _riderItems = rider;
+      });
+    } catch (_) {
+      // 실패 시에는 일단 화면에 아무 것도 표시하지 않음
+    }
+  }
+
+  Future<void> _submitContract() async {
+    final selected = <CoverageItem>[
+      ..._coreItems.where((item) => item.isChecked),
+      ..._riderItems.where((item) => item.isChecked),
+    ];
+
+    if (selected.isEmpty) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('선택된 담보가 없습니다.')),
+        );
+      }
+      return;
+    }
+
+    final now = DateTime.now();
+    String formatDate(DateTime d) => d.toIso8601String().split('T').first;
+
+    final request = InsuranceContractRequestDto(
+      memberId: 1, // TODO: 나중에 실제 로그인 사용자 ID로 교체
+      productId: 2, // 현재 화면이 productId=2 기준
+      paymentCycle: 'MONTHLY',
+      coverageIds: selected.map((e) => e.coverageId).toList(),
+      startDate: formatDate(now),
+      endDate: formatDate(
+        DateTime(now.year + 1, now.month, now.day),
+      ),
+    );
+
+    try {
+      final uri =
+          Uri.parse('${ApiConfig.baseUrl}/api/insurance/contract');
+      final response = await http.post(
+        uri,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(request.toJson()),
+      );
+
+      if (!mounted) return;
+
+      if (response.statusCode != 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('가입 요청 실패 (${response.statusCode})'),
+          ),
+        );
+        return;
+      }
+
+      final decoded = json.decode(response.body);
+      final prettyJson =
+          const JsonEncoder.withIndent('  ').convert(decoded);
+
+      showDialog(
+        context: context,
+        builder: (context) => InsuranceModal(jsonText: prettyJson),
+      );
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('가입 요청 중 오류가 발생했습니다.')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -97,13 +230,13 @@ class _InsuranceCustomScreenState extends State<InsuranceCustomScreen> {
                   int index = entry.key;
                   var item = entry.value;
                   return InsuranceCheckCard(
-                    title: item['title'],
-                    subTitle: item['subTitle'],
-                    amount: item['amount'],
-                    isChecked: item['isChecked'],
+                    title: item.name,
+                    subTitle: '${item.amount}보장',
+                    amount: '월 ${item.price}원',
+                    isChecked: item.isChecked,
                     onTap: () {
                       setState(() {
-                        _coreItems[index]['isChecked'] = !_coreItems[index]['isChecked'];
+                        _coreItems[index].isChecked = !_coreItems[index].isChecked;
                       });
                     },
                   );
@@ -130,17 +263,18 @@ class _InsuranceCustomScreenState extends State<InsuranceCustomScreen> {
                 const SizedBox(height: 20),
                 
                 // --- 선택 담보 리스트 (onTap 추가) ---
-                ..._riderItems.asMap().entries.map((entry) {
+                ..._filteredRiderItems.asMap().entries.map((entry) {
                   int index = entry.key;
                   var item = entry.value;
                   return InsuranceCheckCard(
-                    title: item['title'],
-                    subTitle: item['subTitle'],
-                    amount: item['amount'],
-                    isChecked: item['isChecked'],
+                    title: item.name,
+                    subTitle: '${item.amount}보장',
+                    amount: '월 ${item.price}원',
+                    isChecked: item.isChecked,
                     onTap: () {
                       setState(() {
-                        _riderItems[index]['isChecked'] = !_riderItems[index]['isChecked'];
+                        _filteredRiderItems[index].isChecked =
+                            !_filteredRiderItems[index].isChecked;
                       });
                     },
                   );
@@ -171,27 +305,30 @@ class _InsuranceCustomScreenState extends State<InsuranceCustomScreen> {
             ],
           ),
         ),
-        child: Container(
-          width: double.infinity,
-          height: 60,
-          decoration: BoxDecoration(
-            color: AppColors.hanwhaOrange,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.hanwhaOrange.withOpacity(0.3),
-                blurRadius: 10,
-                offset: const Offset(0, 5),
-              ),
-            ],
-          ),
-          child: const Center(
-            child: Text(
-              '현재 월 / 13,000원',
-              style: TextStyle(
-                fontFamily: 'Pretendard-Bold',
-                color: Colors.white,
-                fontSize: 18,
+        child: GestureDetector(
+          onTap: _submitContract,
+          child: Container(
+            width: double.infinity,
+            height: 60,
+            decoration: BoxDecoration(
+              color: AppColors.hanwhaOrange,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.hanwhaOrange.withOpacity(0.3),
+                  blurRadius: 10,
+                  offset: const Offset(0, 5),
+                ),
+              ],
+            ),
+            child: Center(
+              child: Text(
+                '현재 월 / ${_totalSelectedPrice}원',
+                style: const TextStyle(
+                  fontFamily: 'Pretendard-Bold',
+                  color: Colors.white,
+                  fontSize: 18,
+                ),
               ),
             ),
           ),
@@ -199,4 +336,57 @@ class _InsuranceCustomScreenState extends State<InsuranceCustomScreen> {
       ),
     );
   }
+}
+
+class InsuranceContractRequestDto {
+  final int memberId;
+  final int productId;
+  final String paymentCycle;
+  final List<int> coverageIds;
+  final String startDate;
+  final String endDate;
+
+  InsuranceContractRequestDto({
+    required this.memberId,
+    required this.productId,
+    required this.paymentCycle,
+    required this.coverageIds,
+    required this.startDate,
+    required this.endDate,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'memberId': memberId,
+      'productId': productId,
+      'paymentCycle': paymentCycle,
+      'coverageIds': coverageIds,
+      'startDate': startDate,
+      'endDate': endDate,
+    };
+  }
+}
+
+class CoverageItem {
+  final int coverageId;
+  final int linkId;
+  final String name;
+  final String category;
+  final String description;
+  final int amount;
+  final int price;
+  final bool mandatory;
+  bool isChecked;
+
+  CoverageItem({
+    required this.coverageId,
+    required this.linkId,
+    required this.name,
+    required this.category,
+    required this.description,
+    required this.amount,
+    required this.price,
+    required this.mandatory,
+    this.isChecked = false,
+  });
 }
