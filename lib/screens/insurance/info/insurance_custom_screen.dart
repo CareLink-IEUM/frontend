@@ -195,22 +195,28 @@ class _InsuranceCustomScreenState extends State<InsuranceCustomScreen> {
                   ),
                 ),
                 const SizedBox(height: 8),
-                const Text(
-                  '주계약',
-                  style: TextStyle(
-                    fontFamily: 'Pretendard-SemiBold',
-                    fontSize: 18,
-                    color: AppColors.darkGrey,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  _coreSectionHint,
-                  style: const TextStyle(
-                    fontFamily: 'Pretendard-Medium',
-                    fontSize: 14,
-                    color: AppColors.darkGrey,
-                  ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.baseline,
+                  textBaseline: TextBaseline.alphabetic,
+                  children: [
+                    const Text(
+                      '주계약',
+                      style: TextStyle(
+                        fontFamily: 'Pretendard-Bold',
+                        fontSize: 18,
+                        color: Colors.black,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      _coreSectionHint,
+                      style: const TextStyle(
+                        fontFamily: 'Pretendard-Medium',
+                        fontSize: 14,
+                        color: Color(0xFF9E9E9E),
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 30),
                 
@@ -233,22 +239,28 @@ class _InsuranceCustomScreenState extends State<InsuranceCustomScreen> {
                 }),
                 
                 const SizedBox(height: 40),
-                const Text(
-                  '선택 특약',
-                  style: TextStyle(
-                    fontFamily: 'Pretendard-SemiBold',
-                    fontSize: 18,
-                    color: AppColors.darkGrey,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                const Text(
-                  '원하는 특약을 자유롭게 추가할 수 있어요',
-                  style: TextStyle(
-                    fontFamily: 'Pretendard-Medium',
-                    fontSize: 14,
-                    color: AppColors.darkGrey,
-                  ),
+                const Row(
+                  crossAxisAlignment: CrossAxisAlignment.baseline,
+                  textBaseline: TextBaseline.alphabetic,
+                  children: [
+                    Text(
+                      '선택 특약',
+                      style: TextStyle(
+                        fontFamily: 'Pretendard-Bold',
+                        fontSize: 18,
+                        color: Colors.black,
+                      ),
+                    ),
+                    SizedBox(width: 8),
+                    Text(
+                      '원하는 특약을 자유롭게 추가할 수 있어요',
+                      style: TextStyle(
+                        fontFamily: 'Pretendard-Medium',
+                        fontSize: 14,
+                        color: Color(0xFF9E9E9E),
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 16),
                 
