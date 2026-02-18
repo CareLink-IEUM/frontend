@@ -90,6 +90,7 @@ class _InsuranceCustomScreenState extends State<InsuranceCustomScreen> {
           amount: (map['amount'] as num).toInt(),
           price: (map['price'] as num).toInt(),
           mandatory: map['mandatory'] as bool,
+          recommended: (map['recommended'] as bool?) ?? false,
         );
 
         if (coverage.mandatory) {
@@ -222,6 +223,7 @@ class _InsuranceCustomScreenState extends State<InsuranceCustomScreen> {
                     subTitle: '${item.amount}보장',
                     amount: '월 ${item.price}원',
                     isChecked: item.isChecked,
+                    badgeText: item.recommended ? '추천상품' : null,
                     onTap: () {
                       setState(() {
                         _coreItems[index].isChecked = !_coreItems[index].isChecked;
@@ -268,6 +270,7 @@ class _InsuranceCustomScreenState extends State<InsuranceCustomScreen> {
                     subTitle: '${item.amount}보장',
                     amount: '월 ${item.price}원',
                     isChecked: item.isChecked,
+                    badgeText: item.recommended ? '추천상품' : null,
                     onTap: () {
                       setState(() {
                         _filteredRiderItems[index].isChecked =
@@ -371,6 +374,7 @@ class CoverageItem {
   final int amount;
   final int price;
   final bool mandatory;
+  final bool recommended;
   bool isChecked;
 
   CoverageItem({
@@ -382,6 +386,7 @@ class CoverageItem {
     required this.amount,
     required this.price,
     required this.mandatory,
+    required this.recommended,
     this.isChecked = false,
   });
 }

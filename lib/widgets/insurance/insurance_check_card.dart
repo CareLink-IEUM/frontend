@@ -6,6 +6,7 @@ class InsuranceCheckCard extends StatelessWidget {
   final String subTitle;
   final String amount;
   final bool isChecked;
+  final String? badgeText;
   final VoidCallback? onTap;
 
   const InsuranceCheckCard({
@@ -14,6 +15,7 @@ class InsuranceCheckCard extends StatelessWidget {
     required this.subTitle,
     required this.amount,
     this.isChecked = false,
+    this.badgeText,
     this.onTap,
   });
 
@@ -54,36 +56,72 @@ class InsuranceCheckCard extends StatelessWidget {
             const SizedBox(width: 16),
             // 텍스트 정보
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+                  // 제목 및 뱃지 영역
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisSize: MainAxisSize.min, // 뱃지!
+                        children: [
+                          Text(
+                            title,
+                            style: const TextStyle(
+                              fontFamily: 'Pretendard-Bold',
+                              fontSize: 16,
+                              color: Colors.black,
+                            ),
+                          ),
+                          if (badgeText != null) ...[
+                            const SizedBox(width: 8),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: AppColors.hanwhaOrange.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(999),
+                                border: Border.all(
+                                  color: AppColors.hanwhaOrange.withOpacity(0.6),
+                                ),
+                              ),
+                              child: Text(
+                                badgeText!,
+                                style: const TextStyle(
+                                  fontFamily: 'Pretendard-SemiBold',
+                                  fontSize: 12,
+                                  color: AppColors.hanwhaOrange,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        subTitle,
+                        style: const TextStyle(
+                          fontFamily: 'Pretendard-Regular',
+                          fontSize: 13,
+                          color: Color(0xFF9E9E9E),
+                        ),
+                      ),
+                    ],
+                  ),
+                  
+                  // 3. 금액 정보
                   Text(
-                    title,
+                    amount,
                     style: const TextStyle(
-                      fontFamily: 'Pretendard-Bold',
+                      fontFamily: 'Pretendard-SemiBold',
                       fontSize: 16,
                       color: Colors.black,
                     ),
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    subTitle,
-                    style: const TextStyle(
-                      fontFamily: 'Pretendard-Regular',
-                      fontSize: 13,
-                      color: Color(0xFF9E9E9E),
-                    ),
-                  ),
                 ],
-              ),
-            ),
-            // 금액 정보
-            Text(
-              amount,
-              style: const TextStyle(
-                fontFamily: 'Pretendard-SemiBold',
-                fontSize: 16,
-                color: Colors.black,
               ),
             ),
           ],

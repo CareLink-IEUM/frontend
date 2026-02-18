@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hanwha/constants/theme.dart';
-<<<<<<< HEAD
 import 'package:hanwha/screens/insurance/info/insurance_home_screen.dart';
-=======
-import 'package:hanwha/screens/hospital/translation/translation_screen.dart';
->>>>>>> origin/main
+//import 'package:hanwha/screens/hospital/translation/translation_screen.dart';
 
 class MainScreen extends StatelessWidget {
   const MainScreen({super.key});
@@ -337,10 +334,10 @@ class MainScreen extends StatelessWidget {
         if (label == '주변 병원') {
           //Navigator.push(context, MaterialPageRoute(builder: (context) => const HospitalScreen()));
         } else if (label == '병원 통역') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const TranslationScreen()),
-          );
+          // Navigator.push(
+          //   context,
+          //   MaterialPageRoute(builder: (context) => const TranslationScreen()),
+          // );
         } else if (label == '가족 관리') {
         } else {
           // 귀국 신청
