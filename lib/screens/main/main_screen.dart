@@ -266,8 +266,12 @@ class MainScreen extends StatelessWidget {
       child: InkWell(
         onTap: () {
           if (label == '보험 확인') {
-            // Navigator.push(context, MaterialPageRoute(builder: (context) => const InsuranceDetailScreen()));
-            print('보험확인 클릭됨');
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const InsuranceHomeScreen(),
+              ),
+            );
           } else if (label == '질문하기') {
             print('질문하기 클릭됨');
           }
@@ -342,10 +346,10 @@ class MainScreen extends StatelessWidget {
             MaterialPageRoute(builder: (context) => const MainSearchScreen()),
           );
         } else if (label == '병원 통역') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const TranslationScreen()),
-          );
+          // Navigator.push(
+          //   context,
+          //   MaterialPageRoute(builder: (context) => const TranslationScreen()),
+          // );
         } else if (label == '가족 관리') {
         } else {
           // 귀국 신청
