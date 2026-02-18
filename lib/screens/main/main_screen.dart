@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hanwha/constants/theme.dart';
 import 'package:hanwha/screens/hospital/translation/translation_screen.dart';
+import 'package:hanwha/screens/hospital/map/search_screen.dart';
 
 class MainScreen extends StatelessWidget {
   const MainScreen({super.key});
@@ -327,7 +328,10 @@ class MainScreen extends StatelessWidget {
       onTap: () {
         print('$label 클릭됨');
         if (label == '주변 병원') {
-          //Navigator.push(context, MaterialPageRoute(builder: (context) => const HospitalScreen()));
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const MainSearchScreen()),
+          );
         } else if (label == '병원 통역') {
           Navigator.push(
             context,
