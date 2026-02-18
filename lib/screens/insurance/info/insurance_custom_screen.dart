@@ -3,13 +3,20 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:hanwha/config/api_config.dart';
 import 'package:hanwha/constants/theme.dart';
+import 'package:hanwha/constants/insurance_categories.dart';
+import 'package:hanwha/widgets/common/common_app_bar.dart';
 import 'package:hanwha/widgets/insurance/insurance_check_card.dart';
 import 'package:hanwha/widgets/insurance/insurance_category_select.dart';
 import 'package:hanwha/screens/insurance/info/insurance_modal.dart';
 import 'package:http/http.dart' as http;
 
 class InsuranceCustomScreen extends StatefulWidget {
-  const InsuranceCustomScreen({super.key});
+  final int productId;
+
+  const InsuranceCustomScreen({
+    super.key,
+    required this.productId,
+  });
 
   @override
   State<InsuranceCustomScreen> createState() => _InsuranceCustomScreenState();
@@ -18,34 +25,22 @@ class InsuranceCustomScreen extends StatefulWidget {
 class _InsuranceCustomScreenState extends State<InsuranceCustomScreen> {
   int _selectedCategoryIndex = 0;
 
-  // 백엔드 enum 기반 카테고리 코드 (MINI 제외)
-  final List<String> _categoryCodes = [
-    'DISEASE',
-    'INJURY',
-    'DENTAL',
-    'DRIVER',
-    'LIVING',
-  ];
-
-  // 화면에 보여줄 한글 라벨 매핑
-  final Map<String, String> _categoryLabels = const {
-    'DISEASE': '질병',
-    'INJURY': '상해',
-    'DENTAL': '치과',
-    'DRIVER': '운전자',
-    'LIVING': '생활',
-  };
-
-  // 실제 카드에 쓸 데이터 (서버 응답 기반)
+  // 실제 카드에 쓸 데이터
   List<CoverageItem> _coreItems = [];
   List<CoverageItem> _riderItems = [];
 
-  List<String> get _categories =>
-      _categoryCodes.map((code) => _categoryLabels[code] ?? code).toList();
+  List<String> get _categories => InsuranceCategories.getLabels();
+
+  bool get _isCustomProduct =>
+      widget.productId == InsuranceCategories.customProductId;
+
+  String get _coreSectionHint => _isCustomProduct
+      ? '조립식일 때는 주계약 중에 하나 이상 선택해주세요.'
+      : '필수 계약 사항입니다.';
 
   List<CoverageItem> get _filteredRiderItems {
     if (_riderItems.isEmpty) return [];
-    final currentCode = _categoryCodes[_selectedCategoryIndex];
+    final currentCode = InsuranceCategories.categoryCodes[_selectedCategoryIndex];
     return _riderItems
         .where((item) => item.category == currentCode)
         .toList();
@@ -69,7 +64,7 @@ class _InsuranceCustomScreenState extends State<InsuranceCustomScreen> {
 
   Future<void> _fetchInsuranceCoverages() async {
     try {
-      final uri = Uri.parse('${ApiConfig.baseUrl}/api/insurance/2');
+      final uri = Uri.parse('${ApiConfig.baseUrl}/api/insurance/${widget.productId}');
       final response = await http.get(uri);
 
       if (response.statusCode != 200) {
@@ -133,7 +128,7 @@ class _InsuranceCustomScreenState extends State<InsuranceCustomScreen> {
 
     final request = InsuranceContractRequestDto(
       memberId: 1, // TODO: 나중에 실제 로그인 사용자 ID로 교체
-      productId: 2, // 현재 화면이 productId=2 기준
+      productId: widget.productId,
       paymentCycle: 'MONTHLY',
       coverageIds: selected.map((e) => e.coverageId).toList(),
       startDate: formatDate(now),
@@ -182,23 +177,7 @@ class _InsuranceCustomScreenState extends State<InsuranceCustomScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.black, size: 20),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: const Text(
-          '내 맞춤 보장',
-          style: TextStyle(
-            fontFamily: 'Pretendard-Bold',
-            color: Colors.black,
-            fontSize: 18,
-          ),
-        ),
-        centerTitle: true,
-      ),
+      appBar: const CommonAppBar(title: '내 맞춤 보장'),
       body: Stack(
         children: [
           SingleChildScrollView(
@@ -206,8 +185,8 @@ class _InsuranceCustomScreenState extends State<InsuranceCustomScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  '자유 조립형 보험',
+                Text(
+                  InsuranceCategories.getLabelByProductId(widget.productId),
                   style: TextStyle(
                     fontFamily: 'Pretendard-Bold',
                     fontSize: 22,
@@ -216,8 +195,17 @@ class _InsuranceCustomScreenState extends State<InsuranceCustomScreen> {
                 ),
                 const SizedBox(height: 8),
                 const Text(
-                  '원하는 보장을 선택해서 설계해보세요.',
+                  '주계약',
                   style: TextStyle(
+                    fontFamily: 'Pretendard-SemiBold',
+                    fontSize: 18,
+                    color: AppColors.darkGrey,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  _coreSectionHint,
+                  style: const TextStyle(
                     fontFamily: 'Pretendard-Medium',
                     fontSize: 14,
                     color: AppColors.darkGrey,
@@ -244,11 +232,20 @@ class _InsuranceCustomScreenState extends State<InsuranceCustomScreen> {
                 
                 const SizedBox(height: 40),
                 const Text(
-                  '추가 선택 담보 (Rider)',
+                  '선택 특약',
                   style: TextStyle(
-                    fontFamily: 'Pretendard-Bold',
-                    fontSize: 20,
-                    color: Colors.black,
+                    fontFamily: 'Pretendard-SemiBold',
+                    fontSize: 18,
+                    color: AppColors.darkGrey,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  '원하는 특약을 자유롭게 추가할 수 있어요',
+                  style: TextStyle(
+                    fontFamily: 'Pretendard-Medium',
+                    fontSize: 14,
+                    color: AppColors.darkGrey,
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -282,8 +279,6 @@ class _InsuranceCustomScreenState extends State<InsuranceCustomScreen> {
               ],
             ),
           ),
-          
-          // 하단 버튼 생략 (기존 코드와 동일)
           _buildBottomButton(),
         ],
       ),
