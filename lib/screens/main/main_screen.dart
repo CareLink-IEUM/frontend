@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hanwha/constants/theme.dart';
+<<<<<<< HEAD
 import 'package:hanwha/screens/insurance/info/insurance_home_screen.dart';
+=======
+import 'package:hanwha/screens/hospital/translation/translation_screen.dart';
+>>>>>>> origin/main
 
 class MainScreen extends StatelessWidget {
   const MainScreen({super.key});
@@ -178,6 +182,7 @@ class MainScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 _buildGridItem(
+                  context,
                   '주변 병원',
                   Icons.local_hospital_rounded,
                   const Color.fromARGB(255, 255, 255, 255),
@@ -185,6 +190,7 @@ class MainScreen extends StatelessWidget {
                 ),
                 const SizedBox(width: 12),
                 _buildGridItem(
+                  context,
                   '병원 통역',
                   Icons.translate_rounded,
                   const Color.fromARGB(255, 255, 255, 255),
@@ -192,6 +198,7 @@ class MainScreen extends StatelessWidget {
                 ),
                 const SizedBox(width: 12),
                 _buildGridItem(
+                  context,
                   '가족 관리',
                   Icons.family_restroom_rounded,
                   const Color.fromARGB(255, 255, 255, 255),
@@ -199,6 +206,7 @@ class MainScreen extends StatelessWidget {
                 ),
                 const SizedBox(width: 12),
                 _buildGridItem(
+                  context,
                   '귀국 신청',
                   Icons.airplane_ticket_rounded,
                   const Color.fromARGB(255, 255, 255, 255),
@@ -317,6 +325,7 @@ class MainScreen extends StatelessWidget {
 
   // 그리드 아이템
   Widget _buildGridItem(
+    BuildContext context,
     String label,
     IconData icon,
     Color bgColor,
@@ -328,10 +337,13 @@ class MainScreen extends StatelessWidget {
         if (label == '주변 병원') {
           //Navigator.push(context, MaterialPageRoute(builder: (context) => const HospitalScreen()));
         } else if (label == '병원 통역') {
-          //Navigator.push(context, MaterialPageRoute(builder: (context) => const TranslateScreen()));
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const TranslationScreen()),
+          );
         } else if (label == '가족 관리') {
         } else {
-          // 귀국 시청
+          // 귀국 신청
         }
       },
       child: Column(
