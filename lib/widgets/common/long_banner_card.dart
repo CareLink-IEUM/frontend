@@ -40,7 +40,7 @@ class LongBannerCard extends StatelessWidget {
             title,
             style: TextStyle(
               fontFamily: 'Pretendard-Bold',
-              fontSize: 22,
+              fontSize: 16,
               color: textColor,
             ),
           ),

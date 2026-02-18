@@ -50,8 +50,8 @@ class InsuranceCategorySelect extends StatelessWidget {
                     categories[index],
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontFamily: 'Pretendard-Bold', //
-                      fontSize: 15,
+                      fontFamily: 'Pretendard-Bold',
+                      fontSize: 14,
                       // 선택 여부에 따른 텍스트 색상 변경
                       color: isSelected ? AppColors.hanwhaOrange : Colors.black,
                     ),

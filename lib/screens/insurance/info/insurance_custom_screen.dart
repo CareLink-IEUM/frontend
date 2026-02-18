@@ -190,7 +190,7 @@ class _InsuranceCustomScreenState extends State<InsuranceCustomScreen> {
                   InsuranceCategories.getLabelByProductId(widget.productId),
                   style: TextStyle(
                     fontFamily: 'Pretendard-Bold',
-                    fontSize: 22,
+                    fontSize: 18,
                     color: Colors.black,
                   ),
                 ),
@@ -203,7 +203,7 @@ class _InsuranceCustomScreenState extends State<InsuranceCustomScreen> {
                       '주계약',
                       style: TextStyle(
                         fontFamily: 'Pretendard-Bold',
-                        fontSize: 18,
+                        fontSize: 16,
                         color: Colors.black,
                       ),
                     ),
@@ -226,8 +226,8 @@ class _InsuranceCustomScreenState extends State<InsuranceCustomScreen> {
                   var item = entry.value;
                   return InsuranceCheckCard(
                     title: item.name,
-                    subTitle: '${item.amount}보장',
-                    amount: '월 ${item.price}원',
+                    subTitle: '${item.description}시 최대 ${formatMoney(item.amount)} 보장',
+                    amount: '월 ${formatMoney(item.price)}',
                     isChecked: item.isChecked,
                     badgeText: item.recommended ? '추천상품' : null,
                     onTap: () {
@@ -247,7 +247,7 @@ class _InsuranceCustomScreenState extends State<InsuranceCustomScreen> {
                       '선택 특약',
                       style: TextStyle(
                         fontFamily: 'Pretendard-Bold',
-                        fontSize: 18,
+                        fontSize: 16,
                         color: Colors.black,
                       ),
                     ),
@@ -279,8 +279,8 @@ class _InsuranceCustomScreenState extends State<InsuranceCustomScreen> {
                   var item = entry.value;
                   return InsuranceCheckCard(
                     title: item.name,
-                    subTitle: '${item.amount}보장',
-                    amount: '월 ${item.price}원',
+                    subTitle: '${item.description}시 최대 ${formatMoney(item.amount)} 보장',
+                    amount: '월 ${formatMoney(item.price)}',
                     isChecked: item.isChecked,
                     badgeText: item.recommended ? '추천상품' : null,
                     onTap: () {
@@ -337,7 +337,7 @@ class _InsuranceCustomScreenState extends State<InsuranceCustomScreen> {
                 style: const TextStyle(
                   fontFamily: 'Pretendard-Bold',
                   color: Colors.white,
-                  fontSize: 18,
+                  fontSize: 16,
                 ),
               ),
             ),
@@ -401,4 +401,22 @@ class CoverageItem {
     required this.recommended,
     this.isChecked = false,
   });
+}
+
+String formatMoney(int amount) {
+  if (amount >= 100000000) {
+    int eok = amount ~/ 100000000;
+    return '${eok}억원';
+  } else if (amount >= 10000000) {
+    int tenMillion = amount ~/ 10000000;
+    return '${tenMillion}천만원';
+  } else if (amount >= 1000000) {
+    int million = amount ~/ 1000000;
+    return '${million}백만원';
+  } else if (amount >= 10000) {
+    int man = amount ~/ 10000;
+    return '${man}만원';
+  } else {
+    return '${amount}원';
+  }
 }

@@ -70,7 +70,7 @@ class InsuranceCheckCard extends StatelessWidget {
                             title,
                             style: const TextStyle(
                               fontFamily: 'Pretendard-Bold',
-                              fontSize: 16,
+                              fontSize: 14,
                               color: Colors.black,
                             ),
                           ),
@@ -92,7 +92,7 @@ class InsuranceCheckCard extends StatelessWidget {
                                 badgeText!,
                                 style: const TextStyle(
                                   fontFamily: 'Pretendard-SemiBold',
-                                  fontSize: 12,
+                                  fontSize: 10,
                                   color: AppColors.hanwhaOrange,
                                 ),
                               ),
@@ -105,7 +105,7 @@ class InsuranceCheckCard extends StatelessWidget {
                         subTitle,
                         style: const TextStyle(
                           fontFamily: 'Pretendard-Regular',
-                          fontSize: 13,
+                          fontSize: 12,
                           color: Color(0xFF9E9E9E),
                         ),
                       ),
@@ -117,7 +117,7 @@ class InsuranceCheckCard extends StatelessWidget {
                     amount,
                     style: const TextStyle(
                       fontFamily: 'Pretendard-SemiBold',
-                      fontSize: 16,
+                      fontSize: 14,
                       color: Colors.black,
                     ),
                   ),

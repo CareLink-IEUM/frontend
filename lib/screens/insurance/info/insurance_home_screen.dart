@@ -30,7 +30,7 @@ class _InsuranceHomeScreenState extends State<InsuranceHomeScreen> {
                 '보험상품',
                 style: TextStyle(
                   fontFamily: 'Pretendard-Bold',
-                  fontSize: 24,
+                  fontSize: 18,
                   color: Colors.black,
                 ),
               ),
@@ -93,7 +93,7 @@ class _InsuranceHomeScreenState extends State<InsuranceHomeScreen> {
         label,
         style: TextStyle(
           fontFamily: isSelected ? 'Pretendard-SemiBold' : 'Pretendard-Regular',
-          fontSize: 20,
+          fontSize: 16,
           color: isSelected ? AppColors.hanwhaOrange : const Color(0xFF9E9E9E),
         ),
       ),
