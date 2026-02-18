@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:hanwha/constants/theme.dart';
-import 'package:hanwha/screens/insurance/info/insurance_home_screen.dart';
-//import 'package:hanwha/screens/hospital/translation/translation_screen.dart';
+import 'package:hanwha/screens/hospital/translation/translation_screen.dart';
+import 'package:hanwha/screens/hospital/map/search_screen.dart';
 
 class MainScreen extends StatelessWidget {
   const MainScreen({super.key});
@@ -216,8 +217,15 @@ class MainScreen extends StatelessWidget {
 
             // --- 긴급 상황 버튼 ---
             GestureDetector(
-              onTap: () {
-                print('긴급신고(119) 클릭됨');
+              onTap: () async {
+                final Uri telUri = Uri(scheme: 'tel', path: '119');
+                try {
+                  if (await canLaunchUrl(telUri)) {
+                    await launchUrl(telUri);
+                  }
+                } catch (e) {
+                  print(e);
+                }
               },
               child: Container(
                 width: double.infinity,
@@ -332,7 +340,10 @@ class MainScreen extends StatelessWidget {
       onTap: () {
         print('$label 클릭됨');
         if (label == '주변 병원') {
-          //Navigator.push(context, MaterialPageRoute(builder: (context) => const HospitalScreen()));
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const MainSearchScreen()),
+          );
         } else if (label == '병원 통역') {
           // Navigator.push(
           //   context,
