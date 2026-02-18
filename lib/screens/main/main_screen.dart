@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:hanwha/constants/theme.dart';
 import 'package:hanwha/screens/hospital/translation/translation_screen.dart';
 import 'package:hanwha/screens/hospital/map/search_screen.dart';
@@ -216,8 +217,16 @@ class MainScreen extends StatelessWidget {
 
             // --- 긴급 상황 버튼 ---
             GestureDetector(
-              onTap: () {
-                print('긴급신고(119) 클릭됨');
+              onTap: () async {
+                final Uri telUri = Uri(scheme: 'tel', path: '119');
+                try {
+                  // 런처 실행 전후로 context가 유효한지 확인하는 것이 안전합니다.
+                  if (await canLaunchUrl(telUri)) {
+                    await launchUrl(telUri);
+                  }
+                } catch (e) {
+                  print(e);
+                }
               },
               child: Container(
                 width: double.infinity,
