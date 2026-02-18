@@ -220,7 +220,6 @@ class MainScreen extends StatelessWidget {
               onTap: () async {
                 final Uri telUri = Uri(scheme: 'tel', path: '119');
                 try {
-                  // 런처 실행 전후로 context가 유효한지 확인하는 것이 안전합니다.
                   if (await canLaunchUrl(telUri)) {
                     await launchUrl(telUri);
                   }
