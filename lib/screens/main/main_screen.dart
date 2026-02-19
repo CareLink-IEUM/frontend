@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hanwha/constants/theme.dart';
 import 'package:hanwha/screens/insurance/info/insurance_home_screen.dart';
 //import 'package:hanwha/screens/hospital/translation/translation_screen.dart';
+import 'package:hanwha/screens/return/return_home_screen.dart';
 
 class MainScreen extends StatelessWidget {
   const MainScreen({super.key});
@@ -338,9 +339,12 @@ class MainScreen extends StatelessWidget {
           //   context,
           //   MaterialPageRoute(builder: (context) => const TranslationScreen()),
           // );
-        } else if (label == '가족 관리') {
-        } else {
-          // 귀국 신청
+        } if (label == '가족 관리') {
+        } else if (label == '귀국 신청') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const ReturnHomeScreen()),
+          );
         }
       },
       child: Column(
