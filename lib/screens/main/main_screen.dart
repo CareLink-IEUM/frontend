@@ -3,6 +3,8 @@ import 'package:hanwha/constants/theme.dart';
 import 'package:hanwha/screens/insurance/info/insurance_home_screen.dart';
 //import 'package:hanwha/screens/hospital/translation/translation_screen.dart';
 import 'package:hanwha/screens/return/return_home_screen.dart';
+import 'package:hanwha/screens/insurance/chat/insurance_chat_screen.dart';
+import 'package:hanwha/screens/insurance/chat/insurance_mock_chat_screen.dart';
 
 class MainScreen extends StatelessWidget {
   const MainScreen({super.key});
@@ -265,7 +267,13 @@ class MainScreen extends StatelessWidget {
               ),
             );
           } else if (label == '질문하기') {
-            print('질문하기 클릭됨');
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                //builder: (context) => InsuranceChatScreen(),
+                builder: (context) => InsuranceMockChatScreen(),
+              ),
+            );
           }
         },
         child: Padding(
