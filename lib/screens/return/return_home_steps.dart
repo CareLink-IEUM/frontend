@@ -69,19 +69,32 @@ class ExchangeStepContent extends StatelessWidget {
             ],
           ),
         ),
-        const SizedBox(height: 24),
-        // 이미지 영역
+        // [수정] 회색 둥근 네모: 송금 준비 안내 영역
         Container(
           width: double.infinity,
+          padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 20),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
+            color: const Color(0xFFF5F5F5), // 연한 회색 배경
+            borderRadius: BorderRadius.circular(12),
           ),
-          clipBehavior: Clip.antiAlias,
-          child: Image.asset(
-            'assets/images/sample.png',
-            fit: BoxFit.fitWidth,
+          child: const Column(
+            children: [
+              Icon(Icons.description_outlined, size: 40, color: Color(0xFF757575)),
+              SizedBox(height: 12),
+              Text(
+                '해외 송금을 위한\n서류 준비가 완료되었나요?',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontFamily: 'Pretendard-Medium',
+                  fontSize: 15,
+                  color: Color(0xFF616161),
+                  height: 1.4,
+                ),
+              ),
+            ],
           ),
         ),
+        const SizedBox(height: 24),
         const SizedBox(height: 24),
         const ReturnInfoWidget(
           title: '송금 준비 서류는 다 준비하셨나요?',
@@ -98,6 +111,7 @@ class ExchangeStepContent extends StatelessWidget {
   }
 }
 
+// 3단계: 보험이전
 // 3단계: 보험이전
 class InsuranceStepContent extends StatelessWidget {
   const InsuranceStepContent({super.key});
@@ -133,8 +147,13 @@ class InsuranceStepContent extends StatelessWidget {
           title: '미청구 보험금 및 환급금 수령 신청',
           warnings: ['! 미청구 보험금 존재 여부를 먼저 확인해주세요'],
         ),
+        // 수정된 부분: 브릿지 서비스 신청 섹션에 warnings 추가
         const ReturnInfoWidget(
           title: '브릿지 서비스 신청',
+          warnings: [
+            '! 개인정보 활용 동의가 필요해요',
+            '! 리포트를 다운받아 직접 제출해주세요!!',
+          ],
         ),
       ],
     );
@@ -177,36 +196,6 @@ class FinalStepContent extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 60),
-
-        SizedBox(
-          width: double.infinity,
-          height: 56,
-          child: ElevatedButton(
-            onPressed: () {
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (context) => const MainScreen()),
-                (route) => false,
-              );
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.hanwhaOrange,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              elevation: 0,
-            ),
-            child: const Text(
-              '메인 페이지로 돌아가기',
-              style: TextStyle(
-                fontFamily: 'Pretendard-SemiBold',
-                fontSize: 16,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(height: 20),
       ],
     );
   }

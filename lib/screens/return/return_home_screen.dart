@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hanwha/constants/theme.dart';
 import 'package:hanwha/screens/return/return_home_steps.dart';
+import 'package:hanwha/screens/main/main_screen.dart';
 
 class ReturnHomeScreen extends StatefulWidget {
   const ReturnHomeScreen({super.key});
@@ -24,6 +25,7 @@ class _ReturnHomeScreenState extends State<ReturnHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isLastStep = _currentStep == _steps.length - 1;
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -37,61 +39,67 @@ class _ReturnHomeScreenState extends State<ReturnHomeScreen> {
         ),
         backgroundColor: AppColors.background,
         elevation: 0,
+        centerTitle: true, // 타이틀 중앙 정렬 추가
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.black, size: 20),
           onPressed: () => Navigator.pop(context),
         ),
       ),
       body: Column(
         children: [
           const SizedBox(height: 20),
-          // 1. 상단 스테퍼 인디케이터
+          // 1. 상단 스테퍼 인디케이터 (좌우 패딩 유지)
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30),
-            child: Column(
-              children: [
-                _buildStepper(),
-                const SizedBox(height: 10),
-              ],
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: _buildStepper(),
           ),
           const SizedBox(height: 30),
           
-          // 2. 단계별 컨텐츠 영역
+          // 2. 단계별 컨텐츠 영역 (좌우 24px 패딩 적용)
           Expanded(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
+              physics: const BouncingScrollPhysics(),
+              padding: const EdgeInsets.symmetric(horizontal: 24), // 여기에 좌우 패딩이 적용되어 있습니다.
               child: _buildStepBody(),
             ),
           ),
 
-          // 3. 하단 버튼
-          if (_currentStep < _steps.length - 1)
-            Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: SizedBox(
-                width: double.infinity,
-                height: 56,
-                child: ElevatedButton(
-                  onPressed: _nextStep,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.hanwhaOrange,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    elevation: 0,
+          // 3. 하단 버튼 (bottom 여백을 주어 위로 띄움)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(24, 16, 24, 40), // 좌, 상, 우, 하(40)
+            child: SizedBox(
+              width: double.infinity,
+              height: 56,
+              child: ElevatedButton(
+                onPressed: () {
+                  if (isLastStep) {
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (context) => const MainScreen()),
+                      (route) => false,
+                    );
+                  } else {
+                    _nextStep();
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.hanwhaOrange,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Text(
-                    '다음 단계로',
-                    style: TextStyle(
-                      fontFamily: 'Pretendard-SemiBold',
-                      fontSize: 16,
-                      color: Colors.white,
-                    ),
+                  elevation: 0,
+                ),
+                child: Text(
+                  isLastStep ? '메인 페이지로 돌아가기' : '다음 단계로',
+                  style: const TextStyle(
+                    fontFamily: 'Pretendard-SemiBold',
+                    fontSize: 16,
                   ),
                 ),
               ),
             ),
+          ),
         ],
       ),
     );
